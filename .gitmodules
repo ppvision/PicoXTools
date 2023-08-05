@@ -1,0 +1,12 @@
+[submodule "submodule/littlefs/module"]
+	path = submodule/littlefs/module
+	url = https://github.com/littlefs-project/littlefs.git
+[submodule "submodule/disassembler/module"]
+	path = submodule/disassembler/module
+	url = https://github.com/compuphase/ARM-disassembler.git
+[submodule "submodule/freertos"]
+	path = submodule/freertos
+	url = https://github.com/FreeRTOS/FreeRTOS-Kernel
+[submodule "submodule/CMSIS_5"]
+	path = submodule/CMSIS_5
+	url = https://github.com/ARM-software/CMSIS_5
