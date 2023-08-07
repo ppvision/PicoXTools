@@ -32,7 +32,7 @@ PicoXTools 可以直接插入J-LINK的20针公口排针上。无需额外的排�
 >1. 双核m0+的内核，可以运于100+Mh，
 >2. 存储器：它内置264KB的SRAM
 >3. RP2040支持USB连接，可以同时作为USB主机或USB设备，TinyUSB 良好的移植
->4. PIO（Programmable Input/Output）可以模拟多种外设如 eth mac ,vga,hdmi等专有外设,这个必须给赞，5无能买到FPGA的功效。
+>4. PIO（Programmable Input/Output）可以模拟多种外设如 eth mac ,vga,hdmi等专有外设,这个必须给赞，5元能买到FPGA的功效。
 >5. 极好的社区支持、有大量的极客基于其开发出一些有趣的项目如：示波器、逻辑分析仪等
 
 ### DAP-Link
