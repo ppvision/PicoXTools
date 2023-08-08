@@ -97,7 +97,9 @@ PicoXTools 可以直接插入J-LINK的20针公口排针上。无需额外的排�
 
 # 视频展示
 - Shell && vi && cc 
-![](https://ppvision.github.io/video/shell_vi_cc_demo.mp4)
+> https://ppvision.github.io/video/shell_vi_cc_demo.mp4
+> ![](https://ppvision.github.io/video/shell_vi_cc_demo.mp4)
+
 # ToDO List
 ## 其于Web技术WebSerial的串口助手的实现。
 - 实现一些常用串口协议的解析&调试Modebus等
