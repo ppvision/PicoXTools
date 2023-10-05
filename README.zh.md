@@ -20,17 +20,17 @@
 - 昂贵的调试器(如J-LINK)可能需要配置多个
 
 # PicoXTools 功能图
-![](Xfunctions.png)
+![](docs/Xfunctions.png)
 
 # 实物图
-![](realboard.png)
+![](docs/realboard.png)
 
 
 # 硬件部分
 ## J-LINK 接口转换
 
 参考了网上的实现
-    ![](JtagArm20Adapter_top.png)
+    ![](docs/JtagArm20Adapter_top.png)
 
 PicoXTools 可以直接插入J-LINK的20针公口排针上。无需额外的排线连接；通过双刀四掷模拟开关实现（SWD/cJTAG）1拖四的功能，在某一时刻仅有一路处于ACTIVE状态。
 
@@ -90,11 +90,11 @@ PicoXTools 可以直接插入J-LINK的20针公口排针上。无需额外的排�
     >>  - 云计算和物联网
     此处我们主要介绍JS在嵌入式领域的应用
 
-![](cli_cmds.png)
+![](docs/cli_cmds.png)
 
 ## 内置 WebServer
 - 基于Websocket的 xShell，可以通过浏览器操作PicoXTools的全部功能。
-![](web_server.png)
+![](docs/web_server.png)
 
 ## 内置 C语言编译器
 支持大部分stdlib 及PICO 的SDK可以快速实现API验证，在pico上直接编译执行。
@@ -102,10 +102,10 @@ PicoXTools 可以直接插入J-LINK的20针公口排针上。无需额外的排�
 
 
 # PicoXTools PCB
-![](PicoXTools2.png)
+![](docs/PicoXTools2.png)
 
 ## Pin out
-![](pinout.png)
+![](docs/pinout.png)
 ### USB-1 
 为HUB 上行接口
 ### USB2-3 
@@ -146,6 +146,7 @@ SWD 4针接口
 - Shell && vi && cc 
 > https://ppvision.github.io/video/shell_vi_cc_demo.mp4
 > ![](https://ppvision.github.io/video/shell_vi_cc_demo.mp4)
+
 # 联系作者
 QQ              | Weixin
 :-------------------------:|:-------------------------:
