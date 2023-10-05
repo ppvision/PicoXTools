@@ -1,107 +1,173 @@
-# 项目背景
-做为一个嵌入式软件工程师除去集成开发环境（IDE）不讲，其使用最多的工具为：
-1. 调试器/仿真器：调试器和仿真器用于连接到目标嵌入式系统，以便实时监视程序的执行和内部状态。通过这些工具，工程师可以进行代码单步执行、变量查看和硬件寄存器调试等。常用的调试器有： 
-- Segger J-Link 
-- ST-Link
-- Black Magic Probe
-- DAP-Link
-2. 串口工具:将调试信息（例如变量值、状态信息、错误消息等）通过串口发送到主机。这些信息将帮助工程师了解嵌入式系统的运行状态和问题。（串口调试在嵌入式系统开发中是一种比较基础的调试方法。在实际的应用中，可能会使用更高级的调试工具和方法，例如使用调试器连接到目标板进行硬件级别的调试，或者使用RTT（Real-Time Transfer）等更高级的调试技术）
-目前主要采用usb2ttl模块，主流芯片为:
+
+## [中文版本](./README.zh.md)
+
+# Project Background
+As an embedded software engineer, one of the most commonly used tools, in addition to the integrated development environment (IDE), is:
+1. Debugger/Emulator: Debuggers and emulators are used to connect to the target embedded system to monitor real-time program execution and internal states. Through these tools, engineers can schedule code execution step by step, view variables, and debug hardware registers, among other things. Common debuggers include:
+   - Segger J-Link
+   - ST-Link
+   - Black Magic Probe
+   - DAP-Link
+2. Serial Tools: Serial tools are used to send debugging information (such as variable values, status information, error messages, etc.) over a serial connection to a host computer. This information helps engineers understand the operational status of the embedded system and identify issues. (Serial debugging is a fundamental debugging method in embedded system development. In practical applications, more advanced debugging tools and methods, such as using a debugger to connect to the target board for hardware-level debugging or using Real-Time Transfer (RTT) and other advanced debugging techniques, may be used.)
+
+Currently, the main USB to TTL modules used are USB2TTL modules, with the main chips being:
 - cp210x
-- 国产沁恒居多。
+- Mostly domestically produced CH340.
 
-## 开发场景
-日常的开发仅需一个调试器及一个串口模块即可；但对于模组开发、多CPU/多板间通信开发，我们可能需要多套调试器、串口模块。因此需要:
-- 更多的USB端口来连接调试工具；因此你可能需要额外的USB HUB。
-- 更多的杜邦线连接开发板
-- 昂贵的调试器(如J-LINK)你可能需要配置多个
+# Development Scenarios
+For everyday development, only one debugger and one serial module are required. However, for module development and development involving multiple CPUs/multiple boards, multiple sets of debuggers and serial modules may be needed. Your USB hub provides only a limited number of ports.
+Challenges to address:
+- The need for more USB ports to connect debugging tools; therefore, an additional USB HUB may be required.
+- More DuPont wires to connect development boards.
+- Expensive debuggers (such as J-LINK) may need to be configured for multiple instances.
 
-## PicoXTools拥有的资源&功能
-### J-LINK 接口转换
-
-参考了网上的实现
-    ![](docs/JtagArm20Adapter_top.png)
-    ![](docs/JtagArmtop.png)
-
-PicoXTools 可以直接插入J-LINK的20针公口排针上。无需额外的排线连接；通过 双刀四掷模拟开关实现（SWD/cJTAG）1拖四的功能。当然在某一时刻仅有一路处于ACTIVE状态
-
-
-### Arm开发板：
-> 较优异的性能，良好的社区环境，
-> i.max RT 系列SOC是理想的平台，资源丰富，但考虑到目前的价格、PCB的难度，作为软件工程师似乎难于驾驭，最终选择树梅派RP2040 ，RP2040的主要特点包括：
->1. 双核m0+的内核，可以运于100+Mh，
->2. 存储器：它内置264KB的SRAM
->3. RP2040支持USB连接，可以同时作为USB主机或USB设备，TinyUSB 良好的移植
->4. PIO（Programmable Input/Output）可以模拟多种外设如 eth mac ,vga,hdmi等专有外设,这个必须给赞，5元能买到FPGA的功效。
->5. 极好的社区支持、有大量的极客基于其开发出一些有趣的项目如：示波器、逻辑分析仪等
-
-### DAP-Link
-> 树莓派官方实现的DAP-Link（pic-proble） 可以用来调试RP2040本身，结合open-ocd可以调试更多种类的MCU。
-> 通过拨盘& 双刀四掷模拟开关可对四目标设备进行选择调试
-> 当插入外接JLINK时(通过JLINK第二脚的VCC 高电平来判断）PicoXTools的四路 SWD/cJTAGE 引脚会路由到外部的JLINK，而不是pic—probe.
-
-### 4Port USB2.0 
-> PicoXTools 拥有一个4Port USB2.0 HUB，其中两个分别用于 rp2040与以ch344 ,余下的两个端口可用于外接USB设备，接口类型为TYPE-C
-
-### 4 Port 独立硬件USB to TTL
-> rp2040有usb接口可以通过软件的方式来实现usb to ttl为什么还要采用独立硬件来实现呢，做为一个开发工具,cpu(rp2040)异常时没有串口输出是不是很尴尬，
-因此采用了独立的CH344Q 芯片挂接到USB-HUB上，独立于SOC。同时你可以通过软件组合pico的PIO增加额外的串口接口。
-
-
-### USB 转I2C
-通过rp2040的usb，我们可以通过上位机来操作rp2040 硬件I2C接口来调试扩展板上的I2C设备如温湿度传感器、SS1306 OLED等。
-### USB 转SPI
-通过rp2040的usb，我们可以通过上位机来操作rp2040 硬件SPI接口来调试扩展板上的SPI设备如Lora 模组等
-
-# PicoXTools 功能图
+# PicoXTools Functional Diagram
 ![](docs/Xfunctions.png)
+
+# Physical Appearance
+![](docs/realboard.png)
+
+# Hardware Section
+## J-LINK Interface Conversion
+
+Referenced internet implementation
+![](docs/JtagArm20Adapter_top.png)
+
+PicoXTools can be directly inserted into the 20-pin male header of J-LINK. No additional ribbon cable connection is required; 1-to-4 functionality is achieved through a dual-pole four-throw simulated switch (SWD/cJTAG), with only one channel being active at any given moment.
+
+## PicoXTools Itself Is an Arm Development Board:
+> Excellent performance, a thriving community environment,
+> Based on Raspberry Pi RP2040, the main features of RP2040 include:
+> 1. Dual-core M0+ cores capable of running at over 133MHz.
+> 2. Memory: It has 264KB of SRAM built-in.
+> 3. RP2040 supports USB connectivity and can act as both a USB host and USB device, with good portability for TinyUSB.
+> 4. PIO (Programmable Input/Output) can emulate various peripherals such as Ethernet MAC, VGA, HDMI, and other proprietary peripherals, similar to FPGA functionality.
+> 5. Excellent community support with numerous geeks developing interesting projects based on it, such as oscilloscopes and logic analyzers.
+
+## DAP-Link Functionality
+> The DAP-Link (pic-probe) officially implemented by Raspberry Pi can be used to debug RP2040 itself. Combined with OpenOCD, it can debug a wider range of MCUs.
+> Four target devices can be selected for debugging through a dial and a dual-pole four-throw simulated switch.
+> When an external JLINK is inserted (determined by a high level on the second pin of JLINK's VCC), PicoXTools' four SWD/cJTAGE pins will be routed to the external JLINK instead of pic—probe.
+
+## 4 Port USB 2.0
+> PicoXTools features a 4-port USB 2.0 HUB, with two of them dedicated to the RP2040 with ch344 and the remaining two ports available for external USB devices, with a mainstream TYPE-C interface.
+
+## 4 Independent Hardware USB to TTL Ports
+> While RP2040 has a USB interface that can implement USB to TTL through software, it is embarrassing not to have serial output when RP2040 goes awry as a development tool. Therefore, an independent CH344Q chip is attached to the USB-HUB, separate from the SOC. Of course, you can add additional serial interfaces using software and Pico's PIO.
+
+## USB to I2C
+We can use the built-in Web Server to operate the RP2040 hardware I2C interface and debug I2C devices on the expansion board, such as temperature and humidity sensors, SS1306 OLED displays, etc.
+
+## USB to SPI
+We can use the built-in Web Server to operate the RP2040 hardware SPI interface and debug SPI devices on the expansion board, such as LoRa modules.
+
+## Independent RP2040 Reset Button
+## Independent USB HUB Reset Button
+
+# Software Section
+## A Small Yet Powerful CLI (Command Line Interface) with Abundant Commands Built-In
+- Easily extensible commands
+- Command completion
+- Command history
+- Integrated littlefs/Fatfs, supporting basic file system commands such as ls, cd, copy, rm, mkdir, etc.
+- Includes a Vi editor based on busybox, allowing you to directly edit programs and configuration files in the command line using vi.
+- Supports X and YModem protocol file transmission.
+- NDIS/ECM network card and MSC disk based on TinyUSB
+- Offline burning
+- A JIT C compiler based on AMaCC (https://github.com/jserv/amacc) and C4 (https://github.com/rswier/c4)
+   > The generated files can be executed directly in the PicoXTools shell.
+- Supported scripting languages
+   > 1. Python
+      This one goes without saying; Python is natively supported for Pico development.
+   > 2. Lua
+      The scripting language with the highest degree of integration with C.
+   > 3. C (based on AMaCC & c4)
+      The ultimate glue language is C.
+   > 4. Javascript
+      JavaScript is one of the most widely used programming languages in the development community. It is a high-level, dynamic, weakly typed programming language used extensively in:
+      >> - Front-end and back-end web development
+      >> - Mobile applications
+      >> - Desktop applications
+      >> - Data visualization (e.g., D3.js)
+      >> - Game development
+      >> - Cloud computing and the Internet of Things (IoT)
+      In this context, we mainly discuss the application of JS in the embedded field.
+
+![](docs/cli_cmds.png)
+
+## Built-In Web Server
+- An xShell based on Websockets allows you to operate all PicoXTools functions through a web browser.
+![](docs/web_server.png)
+
+## Built-In C Language Compiler
+Supports most of the standard library and PICO's SDK, allowing for quick API verification. You can compile and execute directly on Pico.
 
 # PicoXTools PCB
 ![](docs/PicoXTools2.png)
 
-# 实物图
-![](docs/realboard.png)
+## Pinout
+![](docs/pinout.png)
+### USB-1
+Upstream interface for the HUB.
+### USB2-3
+USB HUB downstream ports.
+### JP-1
+Standard JTAG 20-pin female header
+
+# PicoXTools PCB
+![](docs/docs/PicoXTools2.png)
+
+## Pin out
+![](docs/docs/pinout.png)
+### USB-1 
+HUB uplink port.
+### USB2-3 
+USB HUB Downlink ports.
+### JP-1
+Standard JTAG 20-pin female connector.
+### JP-2
+
+| CLK | SWD | GND | 3V3 |
+|-----|-----|-----|-----|
+### JP-3
+External expansion interface
+
+| 3V3 | pico-CLK | pico-swd | GPIO-26 | GPIO-26 | UART0-tx | UART0-rx |
+|-----|----------|----------|---------|---------|----------|----------|
+| GND | GPIO-5   | GPIO-4   | GPIO-11 | GPIO-10 | UART0-9  | UART0-8  |
+
+### JP-4
+4 of UART&SWD ports interface.
+
+| 3V3 | RX0  | TX0  | 3V3 | RX2  | TX2  | 3V3 | RX2  | TX2  | 3V3 | RX3  | TX3  |
+|-----|------|------|-----|------|------|-----|------|------|-----|------|------|
+| GND | CLK0 | SWD0 | GND | CLK2 | SWD2 | GND | CLK2 | SWD2 | GND | CLK3 | SWD3 |
 
 
-# 软件部分
-## 小而美的CLI(命令行) 
-- 可方便扩充命令
-- 集成littlefs ,支持基本文件系统命令：ls\cd\copy\rm\mkdir等。
-- 移值了busybox的vi 没错你可以用vi 在线修改程序、配置文件等。
-- 支持X、YModem协议传输文件。
-- 基于AMaCC(https://github.com/jserv/amacc)  和 C4(https://github.com/rswier/c4)的即时（JIT）CC编译器,
-    > 生成的文件可以在PicoXTools shell上直接执行。
-- 支持的胶水语言
-  > 1. Python
-    这个自不必多说，pico原生支持python开发
-  > 2. Lua
-    与C结合度最高的脚本语言
-  > 3. C (基于AMaCC&c4)胶水语言的尽头是C
-  > 2. Javascript
-    JavaScript是开发语言中使用最广泛使用的编程语言（好吧，我加个'之一'）。它是一种高级的、动态的、弱类型的编程语言，广泛用于：
-    >>  - Web前端和后端开发，
-    >>  - 移动应用
-    >>  - 桌面应用
-    >>  - 数据可视化（如D3.js）
-    >>  - 游戏开发
-    >>  - 云计算和物联网
-    此处我们主要介绍JS在嵌入式领域的应用
     
-# 致谢🙏
-项目没有从0造轮子，认真的拥抱了开源社区，开源社区为我们提供了宝贵的资源和工具。数以千计的开源库、框架和工具，涵盖了从前端到后端、从数据库到人工智能的各个领域。拥有这些开源资源，我们可以站在巨人的肩膀上，快速构建功能丰富、高效稳定的应用程序。
-感谢如下的项目：
-- [pshell](https://github.com/lurk101/pshell) 非常nice的pico shell 
+# Inspiration & links & Thanks🙏
+The project did not reinvent the wheel from scratch but wholeheartedly embraced the open-source community. The open-source community has provided us with invaluable resources and tools. Thousands of open-source libraries, frameworks, and tools cover various fields, from frontend to backend, from databases to artificial intelligence. Having these open-source resources allows us to stand on the shoulders of giants and rapidly build feature-rich, efficient, and stable applications.
+
+thanks for：
+- [pshell](https://github.com/lurk101/pshell) 
 - [AMaCC](https://github.com/jserv/amacc)
 - [C4](https://github.com/rswier/c4)
 - [FreeRTOS](https://github.com/FreeRTOS/FreeRTOS-Kernel)
 
-# 视频展示
+- [Mongoose](https://mongoose.ws/)
+
+# video show
 - Shell && vi && cc 
 > https://ppvision.github.io/video/shell_vi_cc_demo.mp4
 > ![](https://ppvision.github.io/video/shell_vi_cc_demo.mp4)
+# Contacting the Author
 
-# ToDO List
-## 其于Web技术WebSerial的串口助手的实现。
-- 实现一些常用串口协议的解析&调试Modebus等
+- [ppvision.net@gmail.com](mailto:ppvision.net@gmail.com)
+
+QQ              | Weixin
+:-------------------------:|:-------------------------:
+![](docs/qq_group.jpg)  |  ![](docs/weixin_number.jpg)
+
+
 
 
